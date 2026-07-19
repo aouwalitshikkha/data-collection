@@ -40,6 +40,19 @@ jobs:
             const folder = `submissions/${data.submission_id}`;
             fs.mkdirSync(folder + '/files', { recursive: true });
 
+            // Safe accessors
+            const b = data.business || {};
+            const s = data.social || {};
+            const t = data.trust_badges || {};
+            const p = data.pricing || {};
+            const projects = data.projects || [];
+            const locations = data.locations || [];
+            const reviews = data.reviews || [];
+            const faq = data.faq || { has_faq: '', items: [] };
+            const tl = data.about_timeline || {};
+            const ar = data.about_review || {};
+            const team = data.team_members || [];
+
             // 1. Write data.json next to uploaded files
             fs.writeFileSync(`${folder}/data.json`, JSON.stringify(data, null, 2) + '\n');
 
@@ -48,39 +61,39 @@ jobs:
             summary += `Submitted at: ${data.submitted_at}\n`;
             summary += `Issue: #${issue.number} - ${issue.html_url}\n\n`;
             summary += `## Business\n`;
-            summary += `- Logo: ${data.business.logo}${data.business.logo_option ? ` (${data.business.logo_option})` : ''}\n`;
-            summary += `- Logo file: ${data.business.logo_file || 'none'}\n`;
-            summary += `- Phone: ${data.business.phone}\n`;
-            summary += `- Email: ${data.business.email}\n`;
-            summary += `- Address: ${data.business.address_line1} ${data.business.address_line2}\n\n`;
+            summary += `- Logo: ${b.logo || ''}${b.logo_option ? ` (${b.logo_option})` : ''}\n`;
+            summary += `- Logo file: ${b.logo_file || 'none'}\n`;
+            summary += `- Phone: ${b.phone || ''}\n`;
+            summary += `- Email: ${b.email || ''}\n`;
+            summary += `- Address: ${b.address_line1 || ''} ${b.address_line2 || ''}\n\n`;
             summary += `## Social\n`;
-            for (const [k, v] of Object.entries(data.social)) summary += `- ${k}: ${v}\n`;
+            for (const [k, v] of Object.entries(s)) summary += `- ${k}: ${v || ''}\n`;
             summary += `\n## Trust Badges\n`;
-            for (const [k, v] of Object.entries(data.trust_badges)) summary += `- ${k}: ${v}\n`;
+            for (const [k, v] of Object.entries(t)) summary += `- ${k}: ${v || ''}\n`;
             summary += `\n## Pricing\n`;
-            for (const [k, v] of Object.entries(data.pricing)) summary += `- ${k}: ${v}\n`;
-            summary += `\n## Projects (${data.projects.length})\n`;
-            data.projects.forEach((p, i) => {
+            for (const [k, v] of Object.entries(p)) summary += `- ${k}: ${v || ''}\n`;
+            summary += `\n## Projects (${projects.length})\n`;
+            projects.forEach((p, i) => {
               summary += `\n### Project ${i + 1}\n`;
-              for (const [k, v] of Object.entries(p)) summary += `- ${k}: ${v}\n`;
+              for (const [k, v] of Object.entries(p)) summary += `- ${k}: ${v || ''}\n`;
             });
-            summary += `\n## Locations (${data.locations.length})\n`;
-            data.locations.forEach(l => summary += `- ${l}\n`);
-            summary += `\n## Reviews (${data.reviews.length})\n`;
-            data.reviews.forEach((r, i) => {
+            summary += `\n## Locations (${locations.length})\n`;
+            locations.forEach(l => summary += `- ${l}\n`);
+            summary += `\n## Reviews (${reviews.length})\n`;
+            reviews.forEach((r, i) => {
               summary += `\n### Review ${i + 1}\n`;
-              for (const [k, v] of Object.entries(r)) summary += `- ${k}: ${v}\n`;
+              for (const [k, v] of Object.entries(r)) summary += `- ${k}: ${v || ''}\n`;
             });
-            summary += `\n## FAQ\n- Has FAQ: ${data.faq.has_faq}\n- Items: ${data.faq.items.length}\n`;
-            data.faq.items.forEach((f, i) => {
+            summary += `\n## FAQ\n- Has FAQ: ${faq.has_faq || ''}\n- Items: ${(faq.items || []).length}\n`;
+            (faq.items || []).forEach((f, i) => {
               summary += `\n### FAQ ${i + 1}\n- Q: ${f.question}\n- A: ${f.answer}\n`;
             });
-            summary += `\n## About Timeline\n- Change: ${data.about_timeline.change}\n- Description: ${data.about_timeline.description}\n`;
-            summary += `\n## About Review\n- Change: ${data.about_review.change}\n- Description: ${data.about_review.description}\n`;
-            summary += `\n## Team Members (${data.team_members.length})\n`;
-            data.team_members.forEach((t, i) => {
+            summary += `\n## About Timeline\n- Change: ${tl.change || ''}\n- Description: ${tl.description || ''}\n`;
+            summary += `\n## About Review\n- Change: ${ar.change || ''}\n- Description: ${ar.description || ''}\n`;
+            summary += `\n## Team Members (${team.length})\n`;
+            team.forEach((t, i) => {
               summary += `\n### Team ${i + 1}\n`;
-              for (const [k, v] of Object.entries(t)) summary += `- ${k}: ${v}\n`;
+              for (const [k, v] of Object.entries(t)) summary += `- ${k}: ${v || ''}\n`;
             });
             summary += `\n## Additional\n${data.additional || ''}\n`;
             fs.writeFileSync(`${folder}/SUMMARY.md`, summary);
