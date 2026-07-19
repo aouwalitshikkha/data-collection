@@ -1,0 +1,77 @@
+{
+  "submitted_at": "2026-07-19T15:58:33.813Z",
+  "business": {
+    "logo": "no",
+    "logo_option": "text_based",
+    "logo_file": null,
+    "phone": "",
+    "email": "info@fencinghuntsvilleal.com",
+    "address_line1": "",
+    "address_line2": ""
+  },
+  "social": {
+    "facebook": "",
+    "twitter": "",
+    "instagram": "",
+    "pinterest": "",
+    "google_place": ""
+  },
+  "trust_badges": {
+    "licensed_insured": "",
+    "bbb": "",
+    "experience": "",
+    "experience_years": "",
+    "family_owned": ""
+  },
+  "pricing": {
+    "show_price": "",
+    "price_line_residential": "",
+    "price_line_commercial": ""
+  },
+  "projects": [
+    {
+      "image": "files/project_1.jpg",
+      "location": "",
+      "title": "",
+      "material": "",
+      "fence_type": "",
+      "length": "",
+      "completed_date": "",
+      "problem": "",
+      "solution": "",
+      "timeline": ""
+    }
+  ],
+  "locations": [],
+  "reviews": [
+    {
+      "reviewer_name": "",
+      "location": "",
+      "review_text": ""
+    }
+  ],
+  "faq": {
+    "has_faq": "",
+    "items": []
+  },
+  "about_timeline": {
+    "change": "",
+    "description": ""
+  },
+  "about_review": {
+    "change": "",
+    "description": ""
+  },
+  "team_members": [
+    {
+      "photo": null,
+      "name": "",
+      "position": "",
+      "years_experience": "",
+      "description": ""
+    }
+  ],
+  "additional": "",
+  "submission_id": "2026-07-19T15-58-33",
+  "repo_folder": "submissions/2026-07-19T15-58-33"
+}
