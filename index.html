@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Content Form</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="config.js"></script>
     <style>
         .step { animation: fadeIn .35s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -337,13 +338,31 @@
                 </div>
             </div>
 
+            <div id="uploadingScreen" class="hidden text-center py-12">
+                <div class="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                    <svg class="w-9 h-9 text-blue-600 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle stroke-linecap="round" stroke-width="3" cx="12" cy="12" r="9" stroke-dasharray="50" stroke-dashoffset="15"/></svg>
+                </div>
+                <h2 class="text-lg font-semibold text-gray-800 mb-1">Submitting...</h2>
+                <p id="uploadStatus" class="text-sm text-gray-600">Uploading files...</p>
+            </div>
+
             <div id="successScreen" class="hidden text-center py-12">
                 <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
                     <svg class="w-9 h-9 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                 </div>
                 <h2 class="text-xl font-semibold text-gray-800 mb-2">Thank You!</h2>
-                <p class="text-sm text-gray-600">Your form has been submitted successfully.</p>
-                <button type="button" onclick="resetForm()" class="mt-6 bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 transition font-medium">Start Over</button>
+                <p class="text-sm text-gray-600 mb-3">Your form has been submitted successfully.</p>
+                <a id="issueLink" href="#" target="_blank" class="text-blue-600 underline text-sm">View submission</a>
+                <button type="button" onclick="resetForm()" class="block mx-auto mt-6 bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 transition font-medium">Start Over</button>
+            </div>
+
+            <div id="errorScreen" class="hidden text-center py-12">
+                <div class="w-16 h-16 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
+                    <svg class="w-9 h-9 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Submission Failed</h2>
+                <p id="errorMsg" class="text-sm text-red-600 mb-4"></p>
+                <button type="button" onclick="retrySubmit()" class="bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 transition font-medium">Try Again</button>
             </div>
         </form>
     </div>
@@ -419,10 +438,198 @@
 
         document.getElementById('multiStepForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
-            document.getElementById('successScreen').classList.remove('hidden');
-            updateProgress();
+            submitForm();
         });
+
+        let collectedData = null;
+
+        function collectFormData() {
+            const checked = name => (document.querySelector(`input[name="${name}"]:checked`) || {}).value || '';
+            const val = sel => (document.querySelector(sel) || {}).value || '';
+            const data = {
+                submitted_at: new Date().toISOString(),
+                business: {
+                    logo: checked('logo'),
+                    logo_option: checked('logo_option'),
+                    logo_file: null,
+                    phone: val('#phone'),
+                    email: val('#email'),
+                    address_line1: val('input[name="address_line1"]'),
+                    address_line2: val('input[name="address_line2"]')
+                },
+                social: {
+                    facebook: val('#facebook'),
+                    twitter: val('#twitter'),
+                    instagram: val('#instagram'),
+                    pinterest: val('#pinterest'),
+                    google_place: val('#google_place')
+                },
+                trust_badges: {
+                    licensed_insured: checked('licensed_insured'),
+                    bbb: checked('bbb'),
+                    experience: checked('experience'),
+                    experience_years: val('#exp_years'),
+                    family_owned: checked('family_owned')
+                },
+                pricing: {
+                    show_price: checked('show_price'),
+                    price_line_residential: val('input[name="price_line_residential"]'),
+                    price_line_commercial: val('input[name="price_line_commercial"]')
+                },
+                projects: [],
+                locations: [],
+                reviews: [],
+                faq: { has_faq: checked('has_faq'), items: [] },
+                about_timeline: { change: checked('timeline_change'), description: val('#timeline_desc') },
+                about_review: { change: checked('about_change'), description: val('#about_desc') },
+                team_members: [],
+                additional: val('#step12 textarea')
+            };
+
+            document.querySelectorAll('#projectsContainer .project-entry').forEach((e, i) => {
+                const fields = e.querySelectorAll('input, textarea');
+                data.projects.push({
+                    image: null,
+                    location: fields[1]?.value || '',
+                    title: fields[2]?.value || '',
+                    material: fields[3]?.value || '',
+                    fence_type: fields[4]?.value || '',
+                    length: fields[5]?.value || '',
+                    completed_date: fields[6]?.value || '',
+                    problem: fields[7]?.value || '',
+                    solution: fields[8]?.value || '',
+                    timeline: fields[9]?.value || ''
+                });
+            });
+            document.querySelectorAll('#locationsContainer .location-entry').forEach(e => {
+                const v = e.querySelector('input')?.value;
+                if (v) data.locations.push(v);
+            });
+            document.querySelectorAll('#reviewsContainer .review-entry').forEach(e => {
+                const f = e.querySelectorAll('input, textarea');
+                data.reviews.push({ reviewer_name: f[0]?.value || '', location: f[1]?.value || '', review_text: f[2]?.value || '' });
+            });
+            document.querySelectorAll('#faqContainer .faq-entry').forEach(e => {
+                const f = e.querySelectorAll('input, textarea');
+                if (f[0]?.value) data.faq.items.push({ question: f[0].value, answer: f[1]?.value || '' });
+            });
+            document.querySelectorAll('#teamContainer .team-entry').forEach(e => {
+                const f = e.querySelectorAll('input, textarea');
+                data.team_members.push({ photo: null, name: f[1]?.value || '', position: f[2]?.value || '', years_experience: f[3]?.value || '', description: f[4]?.value || '' });
+            });
+            return data;
+        }
+
+        function getUploadableFiles(data) {
+            const files = [];
+            const logoInput = document.querySelector('#yesOptions input[type=file]');
+            if (data.business.logo === 'yes' && logoInput?.files[0]) files.push({ input: logoInput, dest: 'logo', field: 'business.logo_file' });
+            document.querySelectorAll('#projectsContainer .project-entry').forEach((e, i) => {
+                const f = e.querySelector('input[type=file]');
+                if (f?.files[0]) files.push({ input: f, dest: `project_${i + 1}`, field: `projects[${i}].image`, index: i });
+            });
+            document.querySelectorAll('#teamContainer .team-entry').forEach((e, i) => {
+                const f = e.querySelector('input[type=file]');
+                if (f?.files[0]) files.push({ input: f, dest: `team_${i + 1}`, field: `team_members[${i}].photo`, index: i });
+            });
+            return files;
+        }
+
+        function readFileAsBase64(file) {
+            return new Promise((res, rej) => {
+                const r = new FileReader();
+                r.onload = () => res(r.result.split(',')[1]);
+                r.onerror = rej;
+                r.readAsDataURL(file);
+            });
+        }
+
+        async function uploadFile(file, pathInRepo) {
+            const b64 = await readFileAsBase64(file);
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${pathInRepo}`;
+            const r = await fetch(url, {
+                method: 'PUT',
+                headers: { Authorization: `Bearer ${GITHUB_CONFIG.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+                body: JSON.stringify({ message: `Upload ${pathInRepo}`, content: b64, branch: GITHUB_CONFIG.branch || 'main' })
+            });
+            if (!r.ok) {
+                const t = await r.text();
+                throw new Error(`Upload failed: ${pathInRepo} (${r.status}) ${t}`);
+            }
+            return (await r.json()).content.path;
+        }
+
+        async function createIssue(title, body) {
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/issues`;
+            const r = await fetch(url, {
+                method: 'POST',
+                headers: { Authorization: `Bearer ${GITHUB_CONFIG.token}`, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' },
+                body: JSON.stringify({ title, body, labels: ['form-submission'] })
+            });
+            if (!r.ok) {
+                const t = await r.text();
+                throw new Error(`Issue creation failed (${r.status}) ${t}`);
+            }
+            return await r.json();
+        }
+
+        function setUploadStatus(msg) { const el = document.getElementById('uploadStatus'); if (el) el.textContent = msg; }
+
+        async function submitForm() {
+            if (!window.GITHUB_CONFIG) { showError('config.js is missing. Add your token first.'); return; }
+            if (!GITHUB_CONFIG.token || GITHUB_CONFIG.token.startsWith('YOUR_')) { showError('Invalid token. Edit config.js with your fine-grained PAT.'); return; }
+            collectedData = collectFormData();
+            const submissionId = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            collectedData.submission_id = submissionId;
+            collectedData.repo_folder = `submissions/${submissionId}`;
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById('uploadingScreen').classList.remove('hidden');
+
+            try {
+                const files = getUploadableFiles(collectedData);
+                for (let i = 0; i < files.length; i++) {
+                    const f = files[i];
+                    const ext = (f.input.files[0].name.match(/\.[^.]+$/) || [''])[0];
+                    const filename = `${f.dest}${ext}`;
+                    const path = `${collectedData.repo_folder}/files/${filename}`;
+                    setUploadStatus(`Uploading file ${i + 1}/${files.length}: ${filename}`);
+                    const savedPath = await uploadFile(f.input.files[0], path);
+                    if (f.field === 'business.logo_file') collectedData.business.logo_file = `files/${filename}`;
+                    else if (f.field.startsWith('projects[')) collectedData.projects[f.index].image = `files/${filename}`;
+                    else if (f.field.startsWith('team_members[')) collectedData.team_members[f.index].photo = `files/${filename}`;
+                }
+                setUploadStatus('Creating submission record...');
+                const title = `Form Submission: ${submissionId}`;
+                const body = `## Website Content Form Submission\n\nSubmission ID: \`${submissionId}\`\n\n<!-- SUBMISSION_JSON_START -->\n\`\`\`json\n${JSON.stringify(collectedData, null, 2)}\n\`\`\`\n<!-- SUBMISSION_JSON_END -->`;
+                const issue = await createIssue(title, body);
+                document.getElementById('uploadingScreen').classList.add('hidden');
+                document.getElementById('issueLink').href = issue.html_url;
+                document.getElementById('issueLink').textContent = issue.html_url;
+                document.getElementById('successScreen').classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                showError(err.message || String(err));
+            }
+        }
+
+        function showError(msg) {
+            document.getElementById('uploadingScreen').classList.add('hidden');
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById('errorScreen').classList.remove('hidden');
+            document.getElementById('errorMsg').textContent = msg;
+        }
+        function retrySubmit() {
+            document.getElementById('errorScreen').classList.add('hidden');
+            document.getElementById('step' + currentStep).classList.remove('hidden');
+        }
+
+        function resetForm() {
+            document.getElementById('successScreen').classList.add('hidden');
+            document.getElementById('multiStepForm').reset();
+            currentStep = 1;
+            document.getElementById('step1').classList.remove('hidden');
+            updateProgress();
+        }
 
         function resetForm() {
             document.getElementById('successScreen').classList.add('hidden');

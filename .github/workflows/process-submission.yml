@@ -1,0 +1,113 @@
+name: Process Form Submission
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  process:
+    if: contains(github.event.issue.labels.*.name, 'form-submission')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract submission JSON and save to repo
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const issue = context.payload.issue;
+
+            // Extract JSON between the SUBMISSION_JSON_START / SUBMISSION_JSON_END markers
+            const m = issue.body.match(/<!-- SUBMISSION_JSON_START -->([\s\S]*?)<!-- SUBMISSION_JSON_END -->/);
+            if (!m) {
+              throw new Error('No submission JSON found in issue body');
+            }
+            const jsonBlock = m[1].replace(/```json|```/g, '').trim();
+
+            let data;
+            try {
+              data = JSON.parse(jsonBlock);
+            } catch (e) {
+              throw new Error('Failed to parse submission JSON: ' + e.message);
+            }
+
+            const folder = `submissions/${data.submission_id}`;
+            fs.mkdirSync(folder + '/files', { recursive: true });
+
+            // 1. Write data.json next to uploaded files
+            fs.writeFileSync(`${folder}/data.json`, JSON.stringify(data, null, 2) + '\n');
+
+            // 2. Write a human-readable summary
+            let summary = `# Submission ${data.submission_id}\n\n`;
+            summary += `Submitted at: ${data.submitted_at}\n`;
+            summary += `Issue: #${issue.number} - ${issue.html_url}\n\n`;
+            summary += `## Business\n`;
+            summary += `- Logo: ${data.business.logo}${data.business.logo_option ? ` (${data.business.logo_option})` : ''}\n`;
+            summary += `- Logo file: ${data.business.logo_file || 'none'}\n`;
+            summary += `- Phone: ${data.business.phone}\n`;
+            summary += `- Email: ${data.business.email}\n`;
+            summary += `- Address: ${data.business.address_line1} ${data.business.address_line2}\n\n`;
+            summary += `## Social\n`;
+            for (const [k, v] of Object.entries(data.social)) summary += `- ${k}: ${v}\n`;
+            summary += `\n## Trust Badges\n`;
+            for (const [k, v] of Object.entries(data.trust_badges)) summary += `- ${k}: ${v}\n`;
+            summary += `\n## Pricing\n`;
+            for (const [k, v] of Object.entries(data.pricing)) summary += `- ${k}: ${v}\n`;
+            summary += `\n## Projects (${data.projects.length})\n`;
+            data.projects.forEach((p, i) => {
+              summary += `\n### Project ${i + 1}\n`;
+              for (const [k, v] of Object.entries(p)) summary += `- ${k}: ${v}\n`;
+            });
+            summary += `\n## Locations (${data.locations.length})\n`;
+            data.locations.forEach(l => summary += `- ${l}\n`);
+            summary += `\n## Reviews (${data.reviews.length})\n`;
+            data.reviews.forEach((r, i) => {
+              summary += `\n### Review ${i + 1}\n`;
+              for (const [k, v] of Object.entries(r)) summary += `- ${k}: ${v}\n`;
+            });
+            summary += `\n## FAQ\n- Has FAQ: ${data.faq.has_faq}\n- Items: ${data.faq.items.length}\n`;
+            data.faq.items.forEach((f, i) => {
+              summary += `\n### FAQ ${i + 1}\n- Q: ${f.question}\n- A: ${f.answer}\n`;
+            });
+            summary += `\n## About Timeline\n- Change: ${data.about_timeline.change}\n- Description: ${data.about_timeline.description}\n`;
+            summary += `\n## About Review\n- Change: ${data.about_review.change}\n- Description: ${data.about_review.description}\n`;
+            summary += `\n## Team Members (${data.team_members.length})\n`;
+            data.team_members.forEach((t, i) => {
+              summary += `\n### Team ${i + 1}\n`;
+              for (const [k, v] of Object.entries(t)) summary += `- ${k}: ${v}\n`;
+            });
+            summary += `\n## Additional\n${data.additional || ''}\n`;
+            fs.writeFileSync(`${folder}/SUMMARY.md`, summary);
+
+            // Commit the generated files
+            const { execFileSync } = require('child_process');
+            const run = (cmd, args) => execFileSync(cmd, args, { stdio: 'inherit' });
+
+            // Configure git
+            run('git', ['config', 'user.name', 'github-actions[bot]']);
+            run('git', ['config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com']);
+            run('git', ['add', `${folder}/data.json`, `${folder}/SUMMARY.md`]);
+            run('git', ['commit', '-m', `Process submission ${data.submission_id} (issue #${issue.number})`]);
+            run('git', ['push']);
+
+            // Comment on the issue with the saved path
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: `✅ Submission processed and saved to [\`${folder}/\`](https://github.com/${context.repo.owner}/${context.repo.repo}/tree/main/${folder}).\n\nFiles: [data.json](${folder}/data.json) • [SUMMARY.md](${folder}/SUMMARY.md)`
+            });
+
+            // Close the issue
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              state: 'closed'
+            });
