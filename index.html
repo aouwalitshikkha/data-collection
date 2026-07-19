@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Content Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step { animation: fadeIn .35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .radio-card:checked + span { border-color: #2563eb; background: #eff6ff; color: #1d4ed8; box-shadow: 0 0 0 1px #2563eb; }
+        .field { transition: border-color .15s, box-shadow .15s; }
+        .field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-100 to-slate-200 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden">
+
+        <div class="bg-blue-600 px-6 py-5">
+            <h1 class="text-white text-xl font-semibold">Website Content Form</h1>
+            <p class="text-blue-100 text-sm mt-0.5">Fencing Huntsville AL — provide the details below</p>
+        </div>
+
+        <div class="px-6 pt-5">
+            <div class="flex items-center justify-between mb-2">
+                <span id="stepLabel" class="text-sm font-medium text-gray-600">Step 1 of 12</span>
+                <span id="stepPercent" class="text-sm font-semibold text-blue-600">8%</span>
+            </div>
+            <div class="h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+                <div id="progressBar" class="h-full bg-blue-600 rounded-full transition-all duration-300" style="width:8%"></div>
+            </div>
+        </div>
+
+        <form id="multiStepForm" class="p-6">
+
+            <div id="step1" class="step">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span>🏢</span> Business Information</h2>
+                <div class="mb-5">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Do you have a logo?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="logo" value="yes" class="radio-card sr-only">
+                            <span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="logo" value="no" class="radio-card sr-only">
+                            <span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="noOptions" class="mb-5 hidden">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">What would you like?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="logo_option" value="text_based" class="radio-card sr-only">
+                            <span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Text based logo</span>
+                        </label>
+                        <label class="flex-1 cursor-pointer">
+                            <input type="radio" name="logo_option" value="ai_made" class="radio-card sr-only">
+                            <span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Make with AI</span>
+                        </label>
+                    </div>
+                </div>
+                <div id="yesOptions" class="mb-5 hidden">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Upload Logo File</label>
+                    <input type="file" name="logo_file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                    <input type="email" id="email" name="email" value="info@fencinghuntsvilleal.com" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Address</label>
+                    <input type="text" name="address_line1" placeholder="Address line 1" class="field w-full border border-gray-300 rounded-lg p-2.5 mb-2 outline-none">
+                    <input type="text" name="address_line2" placeholder="Address line 2" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <button type="button" onclick="nextStep()" class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 active:scale-[.99] transition font-medium shadow-sm">Next</button>
+            </div>
+
+            <div id="step2" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span>🌐</span> Company Social Information</h2>
+                <div class="mb-4">
+                    <label for="facebook" class="block text-sm font-medium text-gray-700 mb-1.5">Facebook</label>
+                    <input type="url" id="facebook" name="facebook" placeholder="Facebook URL" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="twitter" class="block text-sm font-medium text-gray-700 mb-1.5">Twitter</label>
+                    <input type="url" id="twitter" name="twitter" placeholder="Twitter URL" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="instagram" class="block text-sm font-medium text-gray-700 mb-1.5">Instagram</label>
+                    <input type="url" id="instagram" name="instagram" placeholder="Instagram URL" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-4">
+                    <label for="pinterest" class="block text-sm font-medium text-gray-700 mb-1.5">Pinterest</label>
+                    <input type="url" id="pinterest" name="pinterest" placeholder="Pinterest URL" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="mb-6">
+                    <label for="google_place" class="block text-sm font-medium text-gray-700 mb-1.5">Google Place / Review URL</label>
+                    <input type="url" id="google_place" name="google_place" placeholder="Google Place or Review URL" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step3" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><span>🛡️</span> Trust Badges</h2>
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 text-sm text-gray-600">On the homepage we have used: <strong>Licensed & Insured, BBB A+ Accredited, 20+ Years Experience, Family Owned</strong></div>
+                <img src="img/1.png" alt="Homepage preview" class="w-full rounded-lg border border-gray-200 mb-4" onerror="this.style.display='none'">
+
+                <div class="space-y-4 mb-6">
+                    <div>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">Can I use Licensed and Insured?</p>
+                        <div class="flex gap-3">
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="licensed_insured" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="licensed_insured" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">Can I use BBB A+ Accredited?</p>
+                        <div class="flex gap-3">
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="bbb" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="bbb" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">20+ Years Experience?</p>
+                        <div class="flex gap-3">
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="experience" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="experience" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                        </div>
+                    </div>
+                    <div id="expYearsBox" class="hidden">
+                        <label for="exp_years" class="block text-sm font-medium text-gray-700 mb-1.5">How many years of experience do you want to use?</label>
+                        <input type="number" id="exp_years" name="exp_years" min="1" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                    </div>
+                    <div>
+                        <p class="block text-sm font-medium text-gray-700 mb-2">Should I use Family Owned?</p>
+                        <div class="flex gap-3">
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="family_owned" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                            <label class="flex-1 cursor-pointer"><input type="radio" name="family_owned" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step4" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><span>💲</span> Pricing Information</h2>
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-4 text-sm text-gray-600">In home page I have written like this: <strong>Starting from $15/ft for wood • $25/ft for vinyl in residential fence installation, and in commercial installation Starting from $12/ft for chain link • $18/ft for aluminum.</strong></div>
+                <img src="img/2.png" alt="Pricing preview" class="w-full rounded-lg border border-gray-200 mb-4" onerror="this.style.display='none'">
+                <div class="mb-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Should I show the price?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="show_price" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="show_price" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                    </div>
+                </div>
+                <div id="priceLineBox" class="mb-6 hidden">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">What will be the line?</p>
+                    <input type="text" name="price_line_residential" placeholder="Residential pricing line" class="field w-full border border-gray-300 rounded-lg p-2.5 mb-2 outline-none">
+                    <input type="text" name="price_line_commercial" placeholder="Commercial pricing line" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none">
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step5" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1 flex items-center gap-2"><span>📋</span> Project Details</h2>
+                <p class="text-xs text-orange-600 font-medium bg-orange-50 inline-block px-2 py-0.5 rounded-full mb-4">* At least 3-4 projects should be added</p>
+                <div id="projectsContainer">
+                    <div class="project-entry border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Project Image</label>
+                            <input type="file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Location</label><input type="text" placeholder="Madison" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Title</label><input type="text" placeholder="Vinyl Privacy Fence" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Material</label><input type="text" placeholder="Vinyl" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Fence Type</label><input type="text" placeholder="6 Feet Privacy" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Length (ft)</label><input type="text" placeholder="180 ft" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Completed Date</label><input type="text" placeholder="March 2024" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                        </div>
+                        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">What is the problem?</label><textarea rows="2" placeholder="Homeowner wanted maintenance-free privacy fencing that met strict HOA guidelines." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea></div>
+                        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Solution</label><textarea rows="2" placeholder="Installed 6-ft white vinyl privacy fence with reinforced posts. Vinyl was chosen for zero maintenance and 25-year expected lifespan." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Timeline</label><input type="text" placeholder="Two days" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                    </div>
+                </div>
+                <button type="button" onclick="addProject()" class="w-full mb-6 border-2 border-dashed border-blue-300 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-50 transition font-medium">+ Add Another Project</button>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step6" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1 flex items-center gap-2"><span>📍</span> Service Locations</h2>
+                <p class="text-xs text-orange-600 font-medium bg-orange-50 inline-block px-2 py-0.5 rounded-full mb-4">* At least 3-4 locations should be added</p>
+                <div id="locationsContainer">
+                    <div class="location-entry flex items-center gap-2 mb-3">
+                        <input type="text" placeholder="Location name" class="field flex-1 border border-gray-300 rounded-lg p-2.5 outline-none">
+                    </div>
+                </div>
+                <button type="button" onclick="addLocation()" class="w-full mb-6 border-2 border-dashed border-blue-300 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-50 transition font-medium">+ Add Another Location</button>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step7" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-1 flex items-center gap-2"><span>⭐</span> Reviews</h2>
+                <p class="text-xs text-orange-600 font-medium bg-orange-50 inline-block px-2 py-0.5 rounded-full mb-4">* At least 4-5 reviews should be added</p>
+                <div id="reviewsContainer">
+                    <div class="review-entry border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Reviewer Name</label><input type="text" placeholder="Reviewer name" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Location</label><input type="text" placeholder="Location" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                        </div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Review Text</label><textarea rows="3" placeholder="Write the review here..." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea></div>
+                    </div>
+                </div>
+                <button type="button" onclick="addReview()" class="w-full mb-6 border-2 border-dashed border-blue-300 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-50 transition font-medium">+ Add Another Review</button>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step8" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span>❓</span> FAQ</h2>
+                <div class="mb-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Do you have any specific FAQ you want to add which are mostly customer ask?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="has_faq" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="has_faq" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                    </div>
+                </div>
+                <div id="faqContainer" class="hidden">
+                    <div class="faq-entry border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">FAQ Question</label><input type="text" placeholder="Question" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">FAQ Answer</label><textarea rows="3" placeholder="Answer" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea></div>
+                    </div>
+                    <button type="button" onclick="addFAQ()" class="w-full mb-6 border-2 border-dashed border-blue-300 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-50 transition font-medium">+ Add Another FAQ</button>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step9" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><span>📅</span> About Us — Timeline</h2>
+                <p class="text-sm text-gray-600 mb-3">In about us page we have used timeline of the company.</p>
+                <img src="img/3.png" alt="Timeline preview" class="w-full rounded-lg border border-gray-200 mb-4" onerror="this.style.display='none'">
+                <div class="mb-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Do it need to change it?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="timeline_change" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="timeline_change" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                    </div>
+                </div>
+                <div id="timelineDescBox" class="mb-6 hidden">
+                    <label for="timeline_desc" class="block text-sm font-medium text-gray-700 mb-1.5">Describe what needs to be changed</label>
+                    <textarea id="timeline_desc" name="timeline_desc" rows="4" placeholder="Describe the changes you want..." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step10" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><span>🔍</span> About Us Page Review</h2>
+                <p class="text-sm text-gray-600 mb-3">Check about us page URL: <a href="https://fencinghuntsvilleal.com/about/" target="_blank" class="text-blue-600 underline">https://fencinghuntsvilleal.com/about/</a></p>
+                <div class="mb-4">
+                    <p class="block text-sm font-medium text-gray-700 mb-2">Is there any section you want to remove or add?</p>
+                    <div class="flex gap-3">
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="about_change" value="yes" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">Yes</span></label>
+                        <label class="flex-1 cursor-pointer"><input type="radio" name="about_change" value="no" class="radio-card sr-only"><span class="block text-center border border-gray-300 rounded-lg py-2 text-sm text-gray-700 hover:border-blue-400 transition">No</span></label>
+                    </div>
+                </div>
+                <div id="aboutChangeBox" class="mb-6 hidden">
+                    <label for="about_desc" class="block text-sm font-medium text-gray-700 mb-1.5">Describe what to remove or add</label>
+                    <textarea id="about_desc" name="about_desc" rows="6" placeholder="Describe the sections you want to remove or add..." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step11" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><span>👥</span> Team Members</h2>
+                <div id="teamContainer">
+                    <div class="team-entry border border-gray-200 rounded-lg p-4 mb-4">
+                        <div class="mb-3">
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Photo</label>
+                            <input type="file" accept="image/*" class="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Name</label><input type="text" placeholder="Name" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                            <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Position</label><input type="text" placeholder="Position" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                        </div>
+                        <div class="mb-3"><label class="block text-sm font-medium text-gray-700 mb-1.5">Years of Experience</label><input type="text" placeholder="Years of experience" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1.5">Short Description</label><textarea rows="2" placeholder="Short description" class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea></div>
+                    </div>
+                </div>
+                <button type="button" onclick="addTeamMember()" class="w-full mb-6 border-2 border-dashed border-blue-300 text-blue-600 py-2.5 px-4 rounded-lg hover:bg-blue-50 transition font-medium">+ Add Another Team Member</button>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="button" onclick="nextStep()" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Next</button>
+                </div>
+            </div>
+
+            <div id="step12" class="step hidden">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2"><span>💬</span> Any Option or Opinion</h2>
+                <p class="text-sm text-gray-600 mb-4">Please share any additional options, opinions, or feedback.</p>
+                <div class="mb-6">
+                    <textarea rows="8" placeholder="Write your options, opinions, or any additional information here..." class="field w-full border border-gray-300 rounded-lg p-2.5 outline-none"></textarea>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="prevStep()" class="flex-1 bg-gray-100 text-gray-700 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium">Back</button>
+                    <button type="submit" class="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition font-medium shadow-sm">Submit</button>
+                </div>
+            </div>
+
+            <div id="successScreen" class="hidden text-center py-12">
+                <div class="w-16 h-16 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+                    <svg class="w-9 h-9 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h2 class="text-xl font-semibold text-gray-800 mb-2">Thank You!</h2>
+                <p class="text-sm text-gray-600">Your form has been submitted successfully.</p>
+                <button type="button" onclick="resetForm()" class="mt-6 bg-blue-600 text-white py-2.5 px-6 rounded-lg hover:bg-blue-700 transition font-medium">Start Over</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const totalSteps = 12;
+        let currentStep = 1;
+
+        document.querySelectorAll('input[name="logo"]').forEach(radio => radio.addEventListener('change', () => {
+            document.getElementById('noOptions').classList.toggle('hidden', radio.value === 'yes');
+            document.getElementById('yesOptions').classList.toggle('hidden', radio.value === 'no');
+        }));
+        document.querySelectorAll('input[name="experience"]').forEach(radio => radio.addEventListener('change', () => document.getElementById('expYearsBox').classList.toggle('hidden', radio.value === 'yes')));
+        document.querySelectorAll('input[name="show_price"]').forEach(radio => radio.addEventListener('change', () => document.getElementById('priceLineBox').classList.toggle('hidden', radio.value === 'no')));
+        document.querySelectorAll('input[name="has_faq"]').forEach(radio => radio.addEventListener('change', () => document.getElementById('faqContainer').classList.toggle('hidden', radio.value === 'no')));
+        document.querySelectorAll('input[name="timeline_change"]').forEach(radio => radio.addEventListener('change', () => document.getElementById('timelineDescBox').classList.toggle('hidden', radio.value === 'no')));
+        document.querySelectorAll('input[name="about_change"]').forEach(radio => radio.addEventListener('change', () => document.getElementById('aboutChangeBox').classList.toggle('hidden', radio.value === 'no')));
+
+        function attachRemove(container, entry) {
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = 'Remove';
+            removeBtn.className = 'w-full mt-2 bg-red-50 text-red-600 py-1.5 px-3 rounded-lg hover:bg-red-100 transition cursor-pointer text-sm font-medium border border-red-100';
+            removeBtn.onclick = function() { entry.remove(); };
+            entry.appendChild(removeBtn);
+        }
+        function cloneEntry(containerSelector, entrySelector) {
+            const container = document.getElementById(containerSelector);
+            const entry = container.querySelector(entrySelector).cloneNode(true);
+            entry.querySelectorAll('input, textarea').forEach(el => el.value = '');
+            return { container, entry };
+        }
+        function addProject() { const { container, entry } = cloneEntry('projectsContainer', '.project-entry'); attachRemove(container, entry); container.appendChild(entry); }
+        function addReview() { const { container, entry } = cloneEntry('reviewsContainer', '.review-entry'); attachRemove(container, entry); container.appendChild(entry); }
+        function addTeamMember() { const { container, entry } = cloneEntry('teamContainer', '.team-entry'); attachRemove(container, entry); container.appendChild(entry); }
+        function addFAQ() { const container = document.getElementById('faqContainer'); const entry = container.querySelector('.faq-entry').cloneNode(true); entry.querySelectorAll('input, textarea').forEach(el => el.value = ''); attachRemove(container, entry); container.insertBefore(entry, container.querySelector('button')); }
+
+        function addLocation() {
+            const container = document.getElementById('locationsContainer');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'location-entry flex items-center gap-2 mb-3';
+            wrapper.innerHTML = '<input type="text" placeholder="Location name" class="field flex-1 border border-gray-300 rounded-lg p-2.5 outline-none">';
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerHTML = 'X';
+            removeBtn.className = 'bg-red-50 text-red-600 px-3 py-2.5 rounded-lg hover:bg-red-100 transition cursor-pointer text-sm font-medium border border-red-100';
+            removeBtn.onclick = function() { wrapper.remove(); };
+            wrapper.appendChild(removeBtn);
+            container.appendChild(wrapper);
+        }
+
+        function updateProgress() {
+            const pct = Math.round((currentStep / totalSteps) * 100);
+            document.getElementById('progressBar').style.width = pct + '%';
+            document.getElementById('stepLabel').textContent = 'Step ' + currentStep + ' of ' + totalSteps;
+            document.getElementById('stepPercent').textContent = pct + '%';
+        }
+
+        function nextStep() {
+            document.getElementById('step' + currentStep).classList.add('hidden');
+            currentStep++;
+            document.getElementById('step' + currentStep).classList.remove('hidden');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function prevStep() {
+            document.getElementById('step' + currentStep).classList.add('hidden');
+            currentStep--;
+            document.getElementById('step' + currentStep).classList.remove('hidden');
+            updateProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('multiStepForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById('successScreen').classList.remove('hidden');
+            updateProgress();
+        });
+
+        function resetForm() {
+            document.getElementById('successScreen').classList.add('hidden');
+            document.getElementById('multiStepForm').reset();
+            currentStep = 1;
+            document.getElementById('step1').classList.remove('hidden');
+            updateProgress();
+        }
+
+        updateProgress();
+    </script>
+</body>
+</html>
