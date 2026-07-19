@@ -1,0 +1,13 @@
+{
+  "submission_id": "TEST-UPLOAD-001",
+  "business": {
+    "logo_file": "files/logo.png",
+    "phone": "(256) 555-1234",
+    "address_line1": "123 Main St",
+    "email": "info@fencinghuntsvilleal.com",
+    "logo": "yes",
+    "address_line2": "Huntsville, AL"
+  },
+  "submitted_at": "2026-07-19T16:30:00Z",
+  "repo_folder": "submissions/TEST-UPLOAD-001"
+}
